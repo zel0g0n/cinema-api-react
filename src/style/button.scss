@@ -1,0 +1,16 @@
+@import './variables.scss';
+.btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+}
+.btn-primary {
+  background-color: #fff;
+  color: #000;
+}
+.btn-secondary {
+  color: #fff;
+  border: 1px solid #fff;
+
+}
