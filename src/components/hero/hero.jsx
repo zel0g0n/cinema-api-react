@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import './hero.scss'
-import MovieService from '../../service/movie-service'
-
+import useMovieService from '../../service/movie-service'
 const Hero = () => {
   useEffect(() => {
     reRandomMovie()
   },[])
-  const [movieData, setMovieData] = useState({})
-  const movieService = new MovieService()
+  const [movieData, setMovieData] = useState(null)
+  const {getRandomMovie} = useMovieService()
 
   const reRandomMovie = async () => {
     try {
-      const res = await movieService.getRandomMovie()
+      const res = await getRandomMovie()
       setMovieData(res)
     }catch(err) {
       console.error(err)
@@ -30,15 +29,24 @@ const Hero = () => {
         <button className="btn btn-seconday">DETAILS</button>
       </div>
       <div className="hero__movie">
-        {movieData?.image && <img src={movieData.image} alt="movie-image" />}
-        <div className="hero__movie-descr">
-          <h2>{movieData.name}</h2>
-          <p>{(movieData.description && movieData.description.length>200)?movieData.description.slice(0,200)+'...':movieData.description}</p>
-          <div>
-            <button onClick={reRandomMovie} className='btn btn-primary'>Random movie</button>
-            <button className='btn btn-secondary'>Details</button>
-          </div>
-        </div>
+        {
+          movieData?(
+            <>{movieData.image && <img src={movieData.image} alt="movie-image" />}
+
+            <div className="hero__movie-descr">
+              <h2>{movieData.name}</h2>
+              <p>{(movieData.description && movieData.description.length>200)?movieData.description.slice(0,200)+'...':movieData.description}</p>
+              <div>
+                <button onClick={reRandomMovie} className='btn btn-primary'>Random movie</button>
+                <button className='btn btn-secondary'>Details</button>
+              </div>
+            </div>
+            </>
+          ):(
+            <p>Please wait...</p>
+          )
+        }
+        
 
       </div>
     </div>
