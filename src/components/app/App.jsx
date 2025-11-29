@@ -1,13 +1,10 @@
 import ErrorBoundary from "../error-boundary/ErrorBoundary"
-import {lazy, Suspense} from 'react'
-// import Hero from 
+import {createContext, lazy, Suspense, useCallback, useState} from 'react'
 import Navbar from "../navbar/navbar" 
 import { Routes, Route } from "react-router"
-// import RowMovies from 
-// import Popular from 
-// import Rating from 
-// import Movie from 
-
+import Counter from "../counter"
+export const dataContext = createContext(null)
+const {Provider} = dataContext
 const  Hero  = lazy(() => import("../hero/hero")),
        Popular = lazy(() => import("../popular/popular")),
        RowMovies = lazy(() => import("../row-movies/row-movies")),
@@ -15,41 +12,52 @@ const  Hero  = lazy(() => import("../hero/hero")),
        Movie = lazy(() => import("../movie/movie"))
 
 function App() {
+  
+  const [counter, setCounter] = useState({counter: 0})
 
+  const inc = useCallback(() => {
+    setCounter(prev => ({counter: prev.counter+1}))
+  },[])
+  const reset = useCallback(() => {
+    setCounter({counter: 0})
+  },[])
   
   return (
-    <div className='app'>
+    <Provider value={counter}>
+      <div className='app'>
 
 
-      <ErrorBoundary>
-        <Navbar/>
-      </ErrorBoundary>
-      
-      <Routes>
-
+        <ErrorBoundary>
+          <Navbar/>
+          <Counter counter={counter.counter} inc={inc} reset={reset} />
+        </ErrorBoundary>
         <Suspense fallback={<h1>Loading 1 minute, pls...</h1>}>
-          <Route path="/" element={
-            <>
-              <ErrorBoundary>
-                <Hero/>
-              </ErrorBoundary>
-              <ErrorBoundary>
-                <RowMovies/>
-              </ErrorBoundary>
-            </>
-          }/>
-          <Route path="/popular" element={<Popular/>}/>
-          <Route path="/trending" element={<Rating/>}/>
-          <Route path="/movie/:id" element={<Movie/>}/>
+          <Routes>
+              <Route path="/" element={
+                <>
+                  <ErrorBoundary>
+                    <Hero/>
+                  </ErrorBoundary>
+                  <ErrorBoundary>
+                    <RowMovies/>
+                  </ErrorBoundary>
+                </>
+              }/>
+              <Route path="/popular" element={<Popular/>}/>
+              <Route path="/trending" element={<Rating/>}/>
+              <Route path="/movie/:id" element={<Movie/>}/>
+          </Routes>
         </Suspense>
-        
-      </Routes>
-      
 
-      
-      
-      
-    </div>
+
+        
+
+        
+        
+        
+      </div>      
+    </Provider>
+
   )
 }
 
